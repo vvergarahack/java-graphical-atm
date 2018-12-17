@@ -2,6 +2,9 @@ package controller;
 
 import java.awt.CardLayout;
 import java.awt.Container;
+import java.sql.SQLException;
+
+import javax.swing.JOptionPane;
 
 import data.Database;
 import model.BankAccount;
@@ -58,5 +61,29 @@ public class ViewManager {
 	
 	public void switchTo(String view) {
 		((CardLayout) views.getLayout()).show(views, view);
+	}
+	
+	/**
+	 * Routes a shutdown request to the database before exiting the application. This
+	 * allows the database to clean up any open resources it used.
+	 */
+	
+	public void shutdown() {
+		try {			
+			int choice = JOptionPane.showConfirmDialog(
+				views,
+				"Are you sure?",
+				"Shutdown ATM",
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE
+			);
+			
+			if (choice == 0) {
+				db.shutdown();
+				System.exit(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
