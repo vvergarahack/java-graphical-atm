@@ -13,7 +13,7 @@ public class BankAccount {
 	private char status;			// account open/closed status (Y for open, N for closed)
 	private long accountNumber;		// account number (a 9-digit number)
 	private double balance;			// account balance (restricted to two places after the decimal)
-	private User user;			// account holder (see User class)
+	private User user;				// account holder (see User class)
 		
 	/**
 	 * Constructs an instance (or object) of the BankAccount class.

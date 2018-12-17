@@ -30,9 +30,9 @@ public class Database {
 	public static final String ZIP = "zip";
 	public static final String STATUS = "status";
 	
-	private Connection conn;		// a connection to the database
-	private Statement stmt;			// the statement used to build inserts, updates and selects
-	private ResultSet rs;			// result set used for selects
+	private Connection conn;			// a connection to the database
+	private Statement stmt;				// the statement used to build inserts, updates and selects
+	private ResultSet rs;				// result set used for selects
 	private DatabaseMetaData meta;		// metadata about the database
 	
 	/**

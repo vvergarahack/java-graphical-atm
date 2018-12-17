@@ -7,15 +7,15 @@ import data.Database;
 
 public class User {
 	
-	private int pin;			// the user's PIN (a 4-digit between between 0000 and 9999)
-	private int dob;			// the user's date of birth (an 8-digit number stored as YYYYMMDD)
-	private long phone;			// the user's phone number (a 10-digit number)
-	private String firstName;		// the user's first name
-	private String lastName;		// the user's last name
+	private int pin;					// the user's PIN (a 4-digit between between 0000 and 9999)
+	private int dob;					// the user's date of birth (an 8-digit number stored as YYYYMMDD)
+	private long phone;					// the user's phone number (a 10-digit number)
+	private String firstName;			// the user's first name
+	private String lastName;			// the user's last name
 	private String streetAddress;		// the user's street address (i.e., 123 Main Street)
-	private String city;			// the user's city of residence
-	private String state;			// the user's state of residence (2-letter abbreviation)
-	private String zip;			// the user's zip code (a 5-digit number, stored as a String)
+	private String city;				// the user's city of residence
+	private String state;				// the user's state of residence (2-letter abbreviation)
+	private String zip;					// the user's zip code (a 5-digit number, stored as a String)
 	
 	/**
 	 * Constructs an instance (or object) of the User class.

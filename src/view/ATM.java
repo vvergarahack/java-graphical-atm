@@ -17,10 +17,10 @@ public class ATM extends JFrame {
 	 * Status codes for deposits, withdrawals, and transfers.
 	 */
 	
-	public final static int INVALID_AMOUNT = 0;		// invalid amounts (i.e., less than $0.01)
+	public final static int INVALID_AMOUNT = 0;			// invalid amounts (i.e., less than $0.01)
 	public final static int INSUFFICIENT_FUNDS = 1;		// insufficient funds to perform withdrawal or transfer
 	public final static int ACCOUNT_NOT_FOUND = 2;		// destination account (for transfers) not found
-	public final static int SUCCESS = 3;			// transaction completed successfully
+	public final static int SUCCESS = 3;				// transaction completed successfully
 	
 	/*
 	 * Named identifiers for views in CardLayout.
