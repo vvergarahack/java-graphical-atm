@@ -2,11 +2,18 @@ package view;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,6 +29,7 @@ public class LoginView extends JPanel implements ActionListener {
 	private ViewManager manager;			// manages interactions between the views, model, and database
 	private JButton loginButton;			// button that redirects users to the HomeView (if credentials match)
 	private JButton createButton;			// button that directs users to the CreateView
+	private JButton powerButton;			// button that powers off the ATM
 	private JTextField accountField;		// textfield where the user enters his or her account number
 	private JPasswordField pinField;		// textfield where the user enters his or her PIN
 	private JLabel errorMessageLabel;		// label for potential error messages
@@ -66,6 +74,7 @@ public class LoginView extends JPanel implements ActionListener {
 		initLoginButton();
 		initCreateButton();
 		initErrorMessageLabel();
+		initPowerButton();
 	}
 	
 	/*
@@ -143,6 +152,25 @@ public class LoginView extends JPanel implements ActionListener {
 	}
 	
 	/*
+	 * Initializes the components needed for the power button.
+	 */
+	
+	private void initPowerButton() {
+		powerButton = new JButton();
+		powerButton.setBounds(5, 5, 50, 50);
+		powerButton.addActionListener(this);
+		
+		try {
+			Image image = ImageIO.read(new File("images/power-off.png"));
+			powerButton.setIcon(new ImageIcon(image));
+		} catch (Exception e) {
+			powerButton.setText("OFF");
+		}
+		
+		this.add(powerButton);
+	}
+	
+	/*
 	 * LoginView is not designed to be serialized, and attempts to serialize will throw an IOException.
 	 * 
 	 * @param oos
@@ -169,6 +197,8 @@ public class LoginView extends JPanel implements ActionListener {
 			manager.login(accountField.getText(), pinField.getPassword());
 		} else if (source.equals(createButton)) {
 			manager.switchTo(ATM.CREATE_VIEW);
+		} else if (source.equals(powerButton)) {
+			manager.shutdown();
 		} else {
 			System.err.println("ERROR: Action command not found (" + e.getActionCommand() + ")");
 		}
