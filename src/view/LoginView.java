@@ -1,8 +1,11 @@
 package view;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -11,18 +14,18 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import controller.ViewManager;
+
 @SuppressWarnings("serial")
 public class LoginView extends JPanel implements ActionListener {
+		
+	private ViewManager manager;			// manages interactions between the views, model, and database
+	private JButton loginButton;			// button that redirects users to the HomeView (if credentials match)
+	private JButton createButton;			// button that directs users to the CreateView
+	private JTextField accountField;		// textfield where the user enters his or her account number
+	private JPasswordField pinField;		// textfield where the user enters his or her PIN
+	private JLabel errorMessageLabel;		// label for potential error messages
 	
-	private final static String LOGIN = "Login";
-	private final static String CREATE = "Open an Account";
-	
-	private ViewManager manager;
-	private JButton loginButton;
-	private JButton createButton;
-	private JTextField accountField;
-	private JPasswordField pinField;
-
 	/**
 	 * Constructs an instance (or objects) of the LoginView class.
 	 * 
@@ -33,13 +36,26 @@ public class LoginView extends JPanel implements ActionListener {
 		super();
 		
 		this.manager = manager;
+		this.errorMessageLabel = new JLabel("", SwingConstants.CENTER);
 		initialize();
+	}
+	
+	///////////////////// INSTANCE METHODS ////////////////////////////////////////////
+	
+	/**
+	 * Updates the error message label.
+	 * 
+	 * @param errorMessage
+	 */
+	
+	public void updateErrorMessage(String errorMessage) {
+		errorMessageLabel.setText(errorMessage);
 	}
 	
 	///////////////////// PRIVATE METHODS /////////////////////////////////////////////
 	
 	/*
-	 * Initialies the LoginView components.
+	 * Initializes the LoginView components.
 	 */
 	
 	private void initialize() {
@@ -49,10 +65,11 @@ public class LoginView extends JPanel implements ActionListener {
 		initPinField();
 		initLoginButton();
 		initCreateButton();
+		initErrorMessageLabel();
 	}
 	
 	/*
-	 * Initialies the components needed for the account number textfield.
+	 * Initializes the components needed for the account number textfield.
 	 */
 	
 	private void initAccountField() {
@@ -99,6 +116,14 @@ public class LoginView extends JPanel implements ActionListener {
 		this.add(loginButton);
 	}
 	
+	private void initErrorMessageLabel() {
+		errorMessageLabel.setBounds(0, 240, 500, 35);
+		errorMessageLabel.setFont(new Font("DialogInput", Font.ITALIC, 14));
+		errorMessageLabel.setForeground(Color.RED);
+		
+		this.add(errorMessageLabel);
+	}
+	
 	/*
 	 * Initializes the components needed for the create button.
 	 */
@@ -116,20 +141,36 @@ public class LoginView extends JPanel implements ActionListener {
 		this.add(label);
 		this.add(createButton);		
 	}
+	
+	/*
+	 * LoginView is not designed to be serialized, and attempts to serialize will throw an IOException.
+	 * 
+	 * @param oos
+	 * @throws IOException
+	 */
+	
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		throw new IOException("ERROR: The LoginView class is not serializable.");
+	}
 
 	///////////////////// OVERRIDDEN METHODS //////////////////////////////////////////
 	
-	/**
+	/*
 	 * Responds to button clicks performed in the LoginView.
+	 * 
+	 * @param e
 	 */
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		switch (e.getActionCommand()) {
-			case LOGIN: manager.login(accountField.getText(), pinField.getPassword()); break;
-			case CREATE: manager.switchTo(ATM.CREATE_VIEW); break;
-			default: System.err.println("ERROR: Action command not found (" + e.getActionCommand() + ")"); break;
+		Object source = e.getSource();
+		
+		if (source.equals(loginButton)) {
+			manager.login(accountField.getText(), pinField.getPassword());
+		} else if (source.equals(createButton)) {
+			manager.switchTo(ATM.CREATE_VIEW);
+		} else {
+			System.err.println("ERROR: Action command not found (" + e.getActionCommand() + ")");
 		}
 	}
-
 }

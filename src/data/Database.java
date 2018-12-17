@@ -9,19 +9,37 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import model.BankAccount;
+
 public class Database {
 	
-	private Connection conn;
-	private Statement stmt;
-	private ResultSet rs;
-	private DatabaseMetaData meta;
+	/*
+	 * Field names for database table: accounts.
+	 */
+	
+	public static final String ACCOUNT_NUMBER = "account_number";
+	public static final String PIN = "pin";
+	public static final String BALANCE = "balance";
+	public static final String LAST_NAME = "last_name";
+	public static final String FIRST_NAME = "first_name";
+	public static final String DOB = "dob";
+	public static final String PHONE = "phone";
+	public static final String STREET_ADDRESS = "street_address";
+	public static final String CITY = "city";
+	public static final String STATE = "state";
+	public static final String ZIP = "zip";
+	public static final String STATUS = "status";
+	
+	private Connection conn;			// a connection to the database
+	private Statement stmt;				// the statement used to build inserts, updates and selects
+	private ResultSet rs;				// result set used for selects
+	private DatabaseMetaData meta;		// metadata about the database
 	
 	/**
 	 * Constructs an instance (or object) of the Database class.
 	 */
 	
 	public Database() {
-		
 		try {
 			this.connect();
 			this.setup();
@@ -30,15 +48,17 @@ public class Database {
 		}
 	}
 	
+	///////////////////// INSTANCE METHODS ////////////////////////////////////////////
+	
 	/**
-	 * Logs into an existing account.
+	 * Retrieves an existing account by account number and PIN.
 	 * 
 	 * @param accountNumber
 	 * @param pin
 	 * @return
 	 */
 	
-	public boolean login(long accountNumber, int pin) {
+	public BankAccount getAccount(long accountNumber, int pin) {
 		try {
 			stmt = conn.createStatement();
 			
@@ -48,8 +68,140 @@ public class Database {
 			
 			rs = selectStmt.executeQuery();
 			if (rs.next()) {
-				return true;
+				return new BankAccount(rs);
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Retrieves an existing account by account number.
+	 * 
+	 * @param accountNumber
+	 * @return
+	 */
+	
+	public BankAccount getAccount(long accountNumber) {
+		try {
+			stmt = conn.createStatement();
+			
+			PreparedStatement selectStmt = conn.prepareStatement("SELECT * FROM accounts WHERE account_number = ?");
+			selectStmt.setLong(1, accountNumber);
+			
+			rs = selectStmt.executeQuery();
+			if (rs.next()) {
+				return new BankAccount(rs);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Inserts an account into the database.
+	 * 
+	 * @param account
+	 * @return true if the insert is successful; false otherwise.
+	 */
+	
+	public boolean insertAccount(BankAccount account) {
+		try {
+			stmt = conn.createStatement();
+			
+			PreparedStatement insertStmt = conn.prepareStatement("INSERT INTO accounts VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");		
+			insertStmt.setLong(1, account.getAccountNumber());
+			insertStmt.setInt(2, account.getUser().getPin());
+			insertStmt.setDouble(3, account.getBalance());
+			insertStmt.setString(4, account.getUser().getLastName());
+			insertStmt.setString(5, account.getUser().getFirstName());
+			insertStmt.setInt(6, account.getUser().getDob());
+			insertStmt.setLong(7, account.getUser().getPhone());
+			insertStmt.setString(8, account.getUser().getStreetAddress());
+			insertStmt.setString(9, account.getUser().getCity());
+			insertStmt.setString(10, account.getUser().getState());
+			insertStmt.setString(11, account.getUser().getZip());
+			insertStmt.setString(12, String.valueOf(account.getStatus()));
+			
+			insertStmt.executeUpdate();
+			insertStmt.close();
+			
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Performs a soft delete of an account by setting the status to closed.
+	 * 
+	 * @param account
+	 * @return true if the transaction is successful; false otherwise.
+	 */
+	
+	public boolean closeAccount(BankAccount account) {
+		try {
+			stmt = conn.createStatement();
+			
+			PreparedStatement insertStmt = conn.prepareStatement("UPDATE accounts SET status = ? WHERE account_number = ?");		
+			insertStmt.setString(1, "N");
+			insertStmt.setLong(2, account.getAccountNumber());
+			
+			insertStmt.executeUpdate();
+			insertStmt.close();
+			
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Updates all potentially edited fields (i.e., PIN, account balance, phone number,
+	 * street address, city, state, and zip code).
+	 * 
+	 * @param account
+	 * @return true if the transaction is successful; false otherwise.
+	 */
+	
+	public boolean updateAccount(BankAccount account) {
+		try {
+			stmt = conn.createStatement();
+			
+			// all editable fields are included in this update statement
+			
+			PreparedStatement insertStmt = conn.prepareStatement(
+				"UPDATE accounts SET " +
+					"pin = ?, " +
+					"balance = ?, " +
+					"phone = ?, " +
+					"street_address = ?, " +
+					"city = ?, " +
+					"state = ?, " +
+					"zip = ? " +
+				"WHERE account_number = ?"
+			);		
+			insertStmt.setInt(1, account.getUser().getPin());
+			insertStmt.setDouble(2, account.getBalance());
+			insertStmt.setLong(3, account.getUser().getPhone());
+			insertStmt.setString(4, account.getUser().getStreetAddress());
+			insertStmt.setString(5, account.getUser().getCity());
+			insertStmt.setString(6, account.getUser().getState());
+			insertStmt.setString(7, account.getUser().getZip());
+			insertStmt.setLong(8, account.getAccountNumber());
+			
+			insertStmt.executeUpdate();
+			insertStmt.close();
+			
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
