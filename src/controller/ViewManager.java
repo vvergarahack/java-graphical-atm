@@ -39,9 +39,7 @@ public class ViewManager {
 	 */
 	
 	public void login(String accountNumber, char[] pin) {
-		String userPin = new String(pin);
-		
-		if (accountNumber != null && userPin != null && accountNumber.length() > 0 && userPin.length() > 0) {
+		try {
 			account = db.getAccount(Long.valueOf(accountNumber), Integer.valueOf(new String(pin)));
 			
 			if (account == null) {
@@ -53,6 +51,8 @@ public class ViewManager {
 				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
 				lv.updateErrorMessage("");
 			}
+		} catch (NumberFormatException e) {
+			// ignore
 		}
 	}
 	
