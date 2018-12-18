@@ -2,7 +2,6 @@ package controller;
 
 import java.awt.CardLayout;
 import java.awt.Container;
-import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
@@ -40,16 +39,20 @@ public class ViewManager {
 	 */
 	
 	public void login(String accountNumber, char[] pin) {
-		account = db.getAccount(Long.valueOf(accountNumber), Integer.valueOf(new String(pin)));
+		String userPin = new String(pin);
 		
-		if (account == null) {
-			LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
-			lv.updateErrorMessage("Invalid account number and/or PIN.");
-		} else {
-			switchTo(ATM.HOME_VIEW);
+		if (accountNumber != null && userPin != null && accountNumber.length() > 0 && userPin.length() > 0) {
+			account = db.getAccount(Long.valueOf(accountNumber), Integer.valueOf(new String(pin)));
 			
-			LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
-			lv.updateErrorMessage("");
+			if (account == null) {
+				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
+				lv.updateErrorMessage("Invalid account number and/or PIN.");
+			} else {
+				switchTo(ATM.HOME_VIEW);
+				
+				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
+				lv.updateErrorMessage("");
+			}
 		}
 	}
 	
