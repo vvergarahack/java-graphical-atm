@@ -121,8 +121,8 @@ public class HomeView extends JPanel implements ActionListener {
 		Object source = e.getSource();
 		
 		if(source.equals(logOffButton)) {
-			manager.login(null, null);
 			manager.switchTo(ATM.LOGIN_VIEW);
+			//manager.login(null, null);
 		}
 		else if(source.equals(depositButton)) {
 			manager.switchTo(ATM.DEPOSIT_VIEW);
