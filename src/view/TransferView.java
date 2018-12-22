@@ -77,12 +77,12 @@ public class TransferView extends JPanel implements ActionListener {
 	
 	private void initAccountField() {
 		JLabel label = new JLabel("Account Number: ", SwingConstants.RIGHT);
-		label.setBounds(100, 100, 95, 35);
+		label.setBounds(30, 100, 155, 35);
 		label.setLabelFor(accountField);
 		label.setFont(new Font("DialogInput", Font.BOLD, 14));
 		
 		accountField = new JTextField(20);
-		accountField.setBounds(205, 100, 200, 35);
+		accountField.setBounds(225, 100, 150, 35);
 		
 		this.add(label);
 		this.add(accountField);
@@ -90,12 +90,12 @@ public class TransferView extends JPanel implements ActionListener {
 	
 	private void initAmtField() {
 		JLabel label = new JLabel("Transfer Amount: ", SwingConstants.RIGHT);
-		label.setBounds(100, 100, 95, 35);
+		label.setBounds(30, 150, 155, 35);
 		label.setLabelFor(amtField);
 		label.setFont(new Font("DialogInput", Font.BOLD, 14));
 		
 		amtField = new JTextField(20);
-		amtField.setBounds(205, 100, 200, 35);
+		amtField.setBounds(225, 150, 150, 35);
 		
 		this.add(label);
 		this.add(amtField);
@@ -112,7 +112,7 @@ public class TransferView extends JPanel implements ActionListener {
 	
 	private void initTransferButton() {	
 		transferButton = new JButton("Transfer");
-		transferButton.setBounds(205, 180, 200, 35);
+		transferButton.setBounds(225, 200, 150, 35);
 		transferButton.addActionListener(this);
 		
 		this.add(transferButton);
@@ -132,7 +132,7 @@ public class TransferView extends JPanel implements ActionListener {
 	
 	private void initMainMenuButton() {
 		mainMenuButton = new JButton("Main Menu");
-		mainMenuButton.setBounds(126, 360, 248, 35);
+		mainMenuButton.setBounds(126, 300, 248, 35);
 		mainMenuButton.addActionListener(this);
 		
 		//this.add(label);
@@ -170,17 +170,17 @@ public class TransferView extends JPanel implements ActionListener {
 		if (source.equals(transferButton)) {
 			int test = manager.account.transfer(manager.db.getAccount(Long.valueOf(accountField.getText())), Double.valueOf(amtField.getText()));
 			if(test == 3) {
-				JOptionPane.showMessageDialog(null, "Amount successfully deposited.");
+				JOptionPane.showMessageDialog(null, "Transfer Successful.");
 				System.out.println("Success.");
 			}
 			else if(test == 2) {
-				JOptionPane.showMessageDialog(null, "Invalid account number.");
+				JOptionPane.showMessageDialog(null, "Invalid Account Number.");
 			}
 			else if(test == 1) {
-				JOptionPane.showMessageDialog(null, "Insufficient funds.");
+				JOptionPane.showMessageDialog(null, "Insufficient Funds.");
 			}
 			else if(test == 0) {
-				JOptionPane.showMessageDialog(null, "Invalid amount.");
+				JOptionPane.showMessageDialog(null, "Invalid Input.");
 				System.out.println("Failure.");
 			}
 			else {
