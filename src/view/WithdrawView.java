@@ -76,12 +76,12 @@ public class WithdrawView extends JPanel implements ActionListener {
 	
 	private void initAmtField() {
 		JLabel label = new JLabel("Withdrawal Amount:", SwingConstants.RIGHT);
-		label.setBounds(100, 100, 95, 35);
+		label.setBounds(30, 150, 155, 35);
 		label.setLabelFor(amtField);
 		label.setFont(new Font("DialogInput", Font.BOLD, 14));
 		
 		amtField = new JTextField(20);
-		amtField.setBounds(205, 100, 200, 35);
+		amtField.setBounds(225, 150, 150, 35);
 		
 		this.add(label);
 		this.add(amtField);
@@ -98,7 +98,7 @@ public class WithdrawView extends JPanel implements ActionListener {
 	
 	private void initWithdrawButton() {	
 		withdrawButton = new JButton("Withdraw");
-		withdrawButton.setBounds(205, 180, 200, 35);
+		withdrawButton.setBounds(225, 200, 150, 35);
 		withdrawButton.addActionListener(this);
 		
 		this.add(withdrawButton);
@@ -118,7 +118,7 @@ public class WithdrawView extends JPanel implements ActionListener {
 	
 	private void initMainMenuButton() {
 		mainMenuButton = new JButton("Main Menu");
-		mainMenuButton.setBounds(126, 360, 248, 35);
+		mainMenuButton.setBounds(126, 300, 248, 35);
 		mainMenuButton.addActionListener(this);
 		
 		//this.add(label);
@@ -155,15 +155,15 @@ public class WithdrawView extends JPanel implements ActionListener {
 		
 		if (source.equals(withdrawButton)) {
 			if(manager.account.withdraw(Double.valueOf(amtField.getText())) == 3) {
-				JOptionPane.showMessageDialog(null, "Amount successfully withdrawn.");
+				JOptionPane.showMessageDialog(null, "Withdrawl Successful.");
 				System.out.println("Success.");
 			}
 			else if(manager.account.withdraw(Double.valueOf(amtField.getText())) == 0) {
-				JOptionPane.showMessageDialog(null, "Invalid amount.");
+				JOptionPane.showMessageDialog(null, "Invalid Input.");
 				System.out.println("Failure.");
 			}
 			else if(manager.account.withdraw(Double.valueOf(amtField.getText())) == 1) {
-				JOptionPane.showMessageDialog(null, "Insufficient funds.");
+				JOptionPane.showMessageDialog(null, "Insufficient Funds.");
 				System.out.println("Failure.");
 			}
 			else {
