@@ -2,6 +2,7 @@ package controller;
 
 import java.awt.CardLayout;
 import java.awt.Container;
+import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
@@ -13,8 +14,8 @@ import view.LoginView;
 public class ViewManager {
 	
 	private Container views;				// the collection of all views in the application
-	private Database db;					// a reference to the database
-	private BankAccount account;			// the user's bank account
+	public Database db;					// a reference to the database
+	public BankAccount account;			// the user's bank account
 	private BankAccount destination;		// an account to which the user can transfer funds
 	
 	/**
@@ -39,20 +40,16 @@ public class ViewManager {
 	 */
 	
 	public void login(String accountNumber, char[] pin) {
-		try {
-			account = db.getAccount(Long.valueOf(accountNumber), Integer.valueOf(new String(pin)));
+		account = db.getAccount(Long.valueOf(accountNumber), Integer.valueOf(new String(pin)));
+		
+		if (account == null) {
+			LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
+			lv.updateErrorMessage("Invalid account number and/or PIN.");
+		} else {
+			switchTo(ATM.HOME_VIEW);
 			
-			if (account == null) {
-				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
-				lv.updateErrorMessage("Invalid account number and/or PIN.");
-			} else {
-				switchTo(ATM.HOME_VIEW);
-				
-				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
-				lv.updateErrorMessage("");
-			}
-		} catch (NumberFormatException e) {
-			// ignore
+			LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
+			lv.updateErrorMessage("");
 		}
 	}
 	
