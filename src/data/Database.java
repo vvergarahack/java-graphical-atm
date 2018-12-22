@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
-
+import java.sql.ResultSetMetaData;
 import model.BankAccount;
 
 public class Database {
@@ -214,6 +214,24 @@ public class Database {
 	 * 
 	 * @throws SQLException
 	 */
+	public long highestAcctNumber() {
+		long accountNum = 0;
+		try {
+			stmt = conn.createStatement();
+			
+			// all editable fields are included in this update statement
+			
+			ResultSet results = stmt.executeQuery("select max(account_number) from accounts");
+			ResultSetMetaData rsmd = results.getMetaData();
+			int numberCols = rsmd.getColumnCount();
+			accountNum = results.getLong(numberCols);
+			return accountNum;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return accountNum;
+	}
 	
 	public void shutdown() throws SQLException {
 		if (rs != null) rs.close();
