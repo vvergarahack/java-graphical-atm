@@ -52,10 +52,7 @@ public class HomeView extends JPanel implements ActionListener {
 		initDepositButton();
 		initWithdrawButton();
 		initTransferButton();
-//		initViewBalanceButton();
-//		initViewAcctButton();
-//		initEditAcctButton();
-//		initCloseAcctButton();
+
 		// TODO
 		//
 		// this is where you should build the HomeView (i.e., all the components that
