@@ -38,18 +38,22 @@ public class ViewManager {
 	 * @param accountNumber
 	 * @param pin
 	 */
-	
+	public void setAccount(BankAccount account) {
+		this.account = account;
+	}
 	public void login(String accountNumber, char[] pin) {
-		account = db.getAccount(Long.valueOf(accountNumber), Integer.valueOf(new String(pin)));
-		
-		if (account == null) {
-			LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
-			lv.updateErrorMessage("Invalid account number and/or PIN.");
-		} else {
-			switchTo(ATM.HOME_VIEW);
+		try {
+			account = db.getAccount(Long.valueOf(accountNumber), Integer.valueOf(new String(pin)));
 			
-			LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
-			lv.updateErrorMessage("");
+			if (account == null || account.getStatus() == 'N') {
+				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
+				lv.updateErrorMessage("Invalid account number and/or PIN.");
+			} else {
+				sendBankAccount(account, "Home");
+				switchTo(ATM.HOME_VIEW);
+			}
+		} catch (NumberFormatException e) {
+			// ignore
 		}
 	}
 	
@@ -67,6 +71,10 @@ public class ViewManager {
 	 * Routes a shutdown request to the database before exiting the application. This
 	 * allows the database to clean up any open resources it used.
 	 */
+	
+	public BankAccount getAccount() {
+		return account;
+	}
 	
 	public void shutdown() {
 		try {			
@@ -86,4 +94,31 @@ public class ViewManager {
 			e.printStackTrace();
 		}
 	}
+	public void sendBankAccount(BankAccount account, String view) {
+		switch(view) {
+		case "Home":
+			view.HomeView hv = ((view.HomeView) views.getComponents()[ATM.HOME_VIEW_INDEX]);
+			hv.setBankAccount(account);
+			hv.initScreen();
+			break;
+		case "Deposit":
+			view.DepositView dv = ((view.DepositView) views.getComponents()[ATM.DEPOSIT_VIEW_INDEX]);
+			dv.setBankact(account);
+			break;
+		case "Withdraw":
+			view.WithdrawView wv = ((view.WithdrawView) views.getComponents()[ATM.WITHDRAW_VIEW_INDEX]);
+			wv.setBankAccount(account);
+			break;
+		case "Transfer":
+			view.TransferView tv = ((view.TransferView) views.getComponents()[ATM.TRANSFER_VIEW_INDEX]);
+			tv.setBankAccount(account);
+			break;
+		case "ViewInfo":
+			view.InfoView iv = ((view.InfoView) views.getComponents()[ATM.INFO_VIEW_INDEX]);
+			iv.setBankAccount(account);
+			iv.initInfoPortion();
+			break;
+		}
+	}
+	
 }
