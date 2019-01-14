@@ -113,11 +113,11 @@ public class ViewManager {
 			view.TransferView tv = ((view.TransferView) views.getComponents()[ATM.TRANSFER_VIEW_INDEX]);
 			tv.setBankAccount(account);
 			break;
-		case "ViewInfo":
+		/*case "ViewInfo":
 			view.InfoView iv = ((view.InfoView) views.getComponents()[ATM.INFO_VIEW_INDEX]);
 			iv.setBankAccount(account);
 			iv.initInfoPortion();
-			break;
+			break;*/
 		}
 	}
 	
