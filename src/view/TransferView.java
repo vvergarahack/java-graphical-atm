@@ -19,10 +19,13 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import controller.ViewManager;
+import model.BankAccount;
 
 @SuppressWarnings("serial")
 public class TransferView extends JPanel implements ActionListener {
 		
+	
+	private BankAccount act;
 	private ViewManager manager;
 	private JTextField accountField;// manages interactions between the views, model, and database
 	private JTextField amtField;		// textfield where the user enters his or her account number
@@ -43,7 +46,9 @@ public class TransferView extends JPanel implements ActionListener {
 		this.errorMessageLabel = new JLabel("", SwingConstants.CENTER);
 		initialize();
 	}
-	
+	public void setBankAccount(BankAccount setAccount) {
+		this.act = setAccount;
+	}
 	///////////////////// INSTANCE METHODS ////////////////////////////////////////////
 	
 	/**
@@ -150,6 +155,44 @@ public class TransferView extends JPanel implements ActionListener {
 	 * @param oos
 	 * @throws IOException
 	 */
+	public boolean checkUserInput(String input, int type) {
+		// 1 = integer, 2 = double, 3 = long
+		if(type == 1) {
+			int integerInput;
+			try{
+				integerInput = Integer.parseInt(input);
+		    }
+		    catch(NumberFormatException e){
+		    	System.out.println("Response must be numerical. Try again.\n");
+		    	return false;
+		    }
+			return true;
+		}
+		
+		else if(type == 2){
+			double doubleInput;
+			try {
+				doubleInput = Double.parseDouble(input);
+			}
+			catch (NumberFormatException e){
+				System.out.println("Response must be numerical. Try again.\n");
+				return false;
+			}
+			return true;
+		}
+		else {
+			Long longInput;
+			try {
+				longInput = Long.parseLong(input);
+			}
+			catch (NumberFormatException e) {
+				System.out.println("Response must be numerical. Try again.\n");
+				return false;
+			}
+			return true;
+		}
+	}
+	
 	
 	private void writeObject(ObjectOutputStream oos) throws IOException {
 		throw new IOException("ERROR: The LoginView class is not serializable.");
@@ -168,26 +211,49 @@ public class TransferView extends JPanel implements ActionListener {
 		Object source = e.getSource();
 		
 		if (source.equals(transferButton)) {
-			int test = manager.account.transfer(manager.db.getAccount(Long.valueOf(accountField.getText())), Double.valueOf(amtField.getText()));
-			if(test == 3) {
-				JOptionPane.showMessageDialog(null, "Transfer Successful.");
-				System.out.println("Success.");
+			int test = -1;
+			if(accountField.getText() == "" || !checkUserInput(accountField.getText(), 3) || Long.valueOf(accountField.getText()) == act.getAccountNumber()) {
+				test = 2;
+				updateErrorMessage("Invalid account number.");
+
 			}
-			else if(test == 2) {
-				JOptionPane.showMessageDialog(null, "Invalid Account Number.");
+			else if(amtField.getText() == "" || !checkUserInput(amtField.getText(), 2)) {
+				test = 0;
+				updateErrorMessage("Invalid amount.");
+
 			}
-			else if(test == 1) {
-				JOptionPane.showMessageDialog(null, "Insufficient Funds.");
-			}
-			else if(test == 0) {
-				JOptionPane.showMessageDialog(null, "Invalid Input.");
-				System.out.println("Failure.");
-			}
-			else {
-				System.out.println("Error");
+			else{
+				BankAccount transferAccount = manager.db.getAccount(Long.valueOf(accountField.getText()));
+				test = act.transfer(transferAccount, Double.valueOf(amtField.getText()));
+				if(test == 3) {
+					manager.db.updateAccount(act);
+//					System.out.println("Balance before updating account in transfer account: " + transferAccount.toString());
+					manager.db.updateAccount(transferAccount);
+//					System.out.println("Balance after updating account in transfer account: " + manager.db.getAccount(Long.valueOf(accountField.getText())).toString());
+					amtField.setText("");
+					accountField.setText("");
+					updateErrorMessage("Amount successfully transferred.");
+					
+				}
+				else if(test == 2) {
+					updateErrorMessage("Invalid account number.");
+				}
+				else if(test == 1) {
+					updateErrorMessage("Insufficient funds.");
+				}
+				else if(test == 0) {
+					updateErrorMessage("Invalid amount.");
+					System.out.println("Failure.");
+				}
+				else {
+					System.out.println("Error");
+				}
 			}
 		}
 		else if(source.equals(mainMenuButton)) {
+			updateErrorMessage("");
+			amtField.setText("");
+			manager.sendBankAccount(act, "Home");
 			manager.switchTo(ATM.HOME_VIEW);
 		}
 		else {
