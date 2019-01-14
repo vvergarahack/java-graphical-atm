@@ -2,6 +2,7 @@ package model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -74,6 +75,12 @@ public class BankAccount {
 		return balance;
 	}
 	
+	public String getCorrectBalance() {
+		DecimalFormat df = new DecimalFormat("$###,##0.00");
+		String formattedBalance = df.format(balance);
+		return formattedBalance;
+	}
+	
 	/**
 	 * Retrieves the user associated with this account.
 	 * 
@@ -114,15 +121,14 @@ public class BankAccount {
 	 */
 	
 	public int deposit(double amount) {
-		if (amount <= 0) {
+		if (amount <= 0 || !isValidDollarAmount(amount) || !checkUserInput(Double.toString(amount), 2)) {
 			return ATM.INVALID_AMOUNT;
 		} else {
 			balance = balance + amount;
-			
+//			System.out.println("Balance in transfer account: " + Double.toString(balance));
 			return ATM.SUCCESS;
 		}
-	}
-	
+	}	
 	/**
 	 * Withdraws funds from this account.
 	 * 
@@ -131,13 +137,14 @@ public class BankAccount {
 	 */
 	
 	public int withdraw(double amount) {
-		if (amount <= 0) {
+		if (amount <= 0 || !isValidDollarAmount(amount) || !checkUserInput(Double.toString(amount), 2)) {
 			return ATM.INVALID_AMOUNT;
 		} else if (amount > balance) {
 			return ATM.INSUFFICIENT_FUNDS;
 		} else {
 			balance = balance - amount;
-			
+//			System.out.println("Balance of original account: " + Double.toString(balance));
+//			System.out.println("Balance of original account using getBalance: " + Double.toString(getBalance()));
 			return ATM.SUCCESS;
 		}
 	}
@@ -171,6 +178,58 @@ public class BankAccount {
 	 * 
 	 * @return the balance formatted as $###,###.##.
 	 */
+	
+	public boolean isValidDollarAmount(double amount) {
+		String amountString = Double.toString(amount);
+		for(int i = 0; i < amountString.length(); i++) {
+			if(amountString.charAt(i) == '.') {
+				int numberOver = amountString.length() - i;
+				if(numberOver > 3) {
+					return false;
+				}
+				return true;
+			}
+		}
+		return true;
+	}
+	
+	public boolean checkUserInput(String input, int type) {
+		// 1 = integer, 2 = double, 3 = long
+		if(type == 1) {
+			int integerInput;
+			try{
+				integerInput = Integer.parseInt(input);
+		    }
+		    catch(NumberFormatException e){
+		    	System.out.println("Response must be numerical. Try again.\n");
+		    	return false;
+		    }
+			return true;
+		}
+		
+		else if(type == 2){
+			double doubleInput;
+			try {
+				doubleInput = Double.parseDouble(input);
+			}
+			catch (NumberFormatException e){
+				System.out.println("Response must be numerical. Try again.\n");
+				return false;
+			}
+			return true;
+		}
+		else {
+			Long longInput;
+			try {
+				longInput = Long.parseLong(input);
+			}
+			catch (NumberFormatException e) {
+				System.out.println("Response must be numerical. Try again.\n");
+				return false;
+			}
+			return true;
+		}
+	}
 	
 	private String getFormattedBalance() {
 		return NumberFormat.getCurrencyInstance(Locale.US).format(balance);
