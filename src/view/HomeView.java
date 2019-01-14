@@ -1,22 +1,32 @@
 package view;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import controller.ViewManager;
+import model.BankAccount;
 
 @SuppressWarnings("serial")
 public class HomeView extends JPanel implements ActionListener {
 	
 	private ViewManager manager;		// manages interactions between the views, model, and database
+	private BankAccount account;
+	private JLabel printBalance;
+	private JLabel printName;
+	private JLabel printAcct;
 	private JButton logOffButton;
 	private JButton depositButton;
 	private JButton withdrawButton;
 	private JButton transferButton;
+	private JButton viewAcctButton;
+	private JButton closeAcctButton;
 	//private JButton viewBalanceButton;
 	//private JButton viewAccountButton;
 	//private JButton editAccountButton;
@@ -34,6 +44,10 @@ public class HomeView extends JPanel implements ActionListener {
 		initialize();
 	}
 	
+	
+	public void setBankAccount(BankAccount setAccount) {
+		this.account = setAccount;
+	}
 	///////////////////// PRIVATE METHODS /////////////////////////////////////////////
 	
 	/*
@@ -48,10 +62,14 @@ public class HomeView extends JPanel implements ActionListener {
 		// building the HomeView.
 		
 		this.add(new javax.swing.JLabel("HomeView", javax.swing.SwingConstants.CENTER));
+		
+		this.setLayout(null);
 		initLogOffButton();
 		initDepositButton();
 		initWithdrawButton();
 		initTransferButton();
+		initViewAcctButton();
+		initCloseAcctButton();
 
 		// TODO
 		//
@@ -68,10 +86,31 @@ public class HomeView extends JPanel implements ActionListener {
 	 * @param oos
 	 * @throws IOException
 	 */
+	public void initScreen() {
+		System.out.println("Balance on initscreen: " + Double.toString(account.getBalance()));
+		printName = new JLabel("Welcome, " + account.getUser().getFirstName() + " " + account.getUser().getLastName());
+		printName.setBounds(10, 10, 500, 25);
+		printName.setFont(new Font("DialogInput", Font.BOLD, 14));
+		
+		
+		this.add(printName);
+		
+		printAcct = new JLabel("Account Number: " + Long.toString(account.getAccountNumber()));
+		printAcct.setBounds(10,40,500,25);
+		printAcct.setFont(new Font("DialogInput", Font.BOLD, 14));
+		
+		this.add(printAcct);
+		
+		printBalance = new JLabel("Current Balance: " + account.getCorrectBalance());
+		printBalance.setBounds(10, 70, 500, 25);
+		printBalance.setFont(new Font("DialogInput", Font.BOLD, 14));
+		
+		this.add(printBalance);
+	}
 	
 	private void initLogOffButton() {	
 		logOffButton = new JButton("Log Out");
-		logOffButton.setBounds(150, 100, 200, 35);
+		logOffButton.setBounds(150, 130, 200, 35);
 		logOffButton.addActionListener(this);
 		
 		this.add(logOffButton);
@@ -79,7 +118,7 @@ public class HomeView extends JPanel implements ActionListener {
 	
 	private void initDepositButton() {	
 		depositButton = new JButton("Deposit");
-		depositButton.setBounds(150, 150, 200, 35);
+		depositButton.setBounds(150, 180, 200, 35);
 		depositButton.addActionListener(this);
 		
 		this.add(depositButton);
@@ -87,7 +126,7 @@ public class HomeView extends JPanel implements ActionListener {
 	
 	private void initWithdrawButton() {
 		withdrawButton = new JButton("Withdraw");
-		withdrawButton.setBounds(150, 200, 200, 35);
+		withdrawButton.setBounds(150, 230, 200, 35);
 		withdrawButton.addActionListener(this);
 		
 		this.add(withdrawButton);
@@ -95,11 +134,29 @@ public class HomeView extends JPanel implements ActionListener {
 	
 	private void initTransferButton() {
 		transferButton = new JButton("Transfer");
-		transferButton.setBounds(150, 250, 200, 35);
+		transferButton.setBounds(150, 280, 200, 35);
 		transferButton.addActionListener(this);
 		
 		this.add(transferButton);
 	}
+	
+	
+	private void initViewAcctButton() {
+		viewAcctButton = new JButton("Account Info");
+		viewAcctButton.setBounds(150, 330, 200, 35);
+		viewAcctButton.addActionListener(this);
+		
+		this.add(viewAcctButton);
+	}
+	
+	private void initCloseAcctButton() {
+		closeAcctButton = new JButton("Close Account");
+		closeAcctButton.setBounds(150,380,200,35);
+		closeAcctButton.addActionListener(this);
+		
+		this.add(closeAcctButton);
+	}
+
 	
 	private void writeObject(ObjectOutputStream oos) throws IOException {
 		throw new IOException("ERROR: The HomeView class is not serializable.");
@@ -118,17 +175,56 @@ public class HomeView extends JPanel implements ActionListener {
 		Object source = e.getSource();
 		
 		if(source.equals(logOffButton)) {
+			manager.db.updateAccount(account);
+			manager.account.setUser(null);
+			manager.setAccount(null);
+			this.remove(printBalance);
+			this.remove(printName);
+			this.remove(printAcct);
 			manager.switchTo(ATM.LOGIN_VIEW);
-			//manager.login(null, null);
 		}
 		else if(source.equals(depositButton)) {
+			this.remove(printBalance);
+			this.remove(printName);
+			this.remove(printAcct);
+			manager.sendBankAccount(account, "Deposit");
 			manager.switchTo(ATM.DEPOSIT_VIEW);
 		}
 		else if(source.equals(withdrawButton)) {
+			this.remove(printBalance);
+			this.remove(printName);
+			this.remove(printAcct);
+			manager.sendBankAccount(account, "Withdraw");
 			manager.switchTo(ATM.WITHDRAW_VIEW);
 		}
 		else if(source.equals(transferButton)) {
+			this.remove(printBalance);
+			this.remove(printName);
+			this.remove(printAcct);
+			manager.sendBankAccount(account, "Transfer");
 			manager.switchTo(ATM.TRANSFER_VIEW);
+		}
+		else if(source.equals(viewAcctButton)) {
+			this.remove(printBalance);
+			this.remove(printName);
+			this.remove(printAcct);
+			manager.sendBankAccount(account, "ViewInfo");
+			manager.switchTo(ATM.INFO_VIEW);
+		}
+		else if(source.equals(closeAcctButton)) {
+			int choice = JOptionPane.showConfirmDialog(
+					null,
+					"Are you sure?",
+					"Close Account",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE
+				);
+				if (choice == 0) {
+					if(manager.db.closeAccount(account)) {
+						this.removeAll();
+						manager.switchTo(ATM.LOGIN_VIEW);
+					}
+				}
 		}
 		else {
 			System.err.println("ERROR: Action command not found (" + e.getActionCommand() + ")");
