@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -20,12 +21,16 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import controller.ViewManager;
+import model.BankAccount;
 
 @SuppressWarnings("serial")
 public class DepositView extends JPanel implements ActionListener {
 		
+	private JFrame frame;
+	private BankAccount act;
+
 	private ViewManager manager;			// manages interactions between the views, model, and database
-	private JTextField amtField;		// textfield where the user enters his or her account number
+	private JTextField amtField;		// textfield where the user enters his or her act number
 	private JButton depositButton;
 	private JButton mainMenuButton;// label for potential error messages
 	private JLabel errorMessageLabel;		// label for potential error messages
@@ -43,7 +48,9 @@ public class DepositView extends JPanel implements ActionListener {
 		this.errorMessageLabel = new JLabel("", SwingConstants.CENTER);
 		initialize();
 	}
-	
+	public void setBankact(BankAccount setact) {
+		this.act = setact;
+	}
 	///////////////////// INSTANCE METHODS ////////////////////////////////////////////
 	
 	/**
@@ -71,7 +78,7 @@ public class DepositView extends JPanel implements ActionListener {
 	}
 	
 	/*
-	 * Initializes the components needed for the account number textfield.
+	 * Initializes the components needed for the act number textfield.
 	 */
 	
 	private void initAmtField() {
@@ -125,6 +132,44 @@ public class DepositView extends JPanel implements ActionListener {
 		this.add(mainMenuButton);		
 	}
 	
+	public boolean checkUserInput(String input, int type) {
+		// 1 = integer, 2 = double, 3 = long
+		if(type == 1) {
+			int integerInput;
+			try{
+				integerInput = Integer.parseInt(input);
+		    }
+		    catch(NumberFormatException e){
+		    	System.out.println("Response must be numerical. Try again.\n");
+		    	return false;
+		    }
+			return true;
+		}
+		
+		else if(type == 2){
+			double doubleInput;
+			try {
+				doubleInput = Double.parseDouble(input);
+			}
+			catch (NumberFormatException e){
+				System.out.println("Response must be numerical. Try again.\n");
+				return false;
+			}
+			return true;
+		}
+		else {
+			Long longInput;
+			try {
+				longInput = Long.parseLong(input);
+			}
+			catch (NumberFormatException e) {
+				System.out.println("Response must be numerical. Try again.\n");
+				return false;
+			}
+			return true;
+		}
+	}
+	
 	/*
 	 * Initializes the components needed for the power button.
 	 */
@@ -154,19 +199,27 @@ public class DepositView extends JPanel implements ActionListener {
 		Object source = e.getSource();
 		
 		if (source.equals(depositButton)) {
-			if(manager.account.deposit(Double.valueOf(amtField.getText())) == 3) {
-				JOptionPane.showMessageDialog(null, "Deposit Successful.");
-				System.out.println("Success.");
+			int checkResult = 0;
+			if(amtField.getText() == "" || !checkUserInput(amtField.getText(), 2)) {
+				checkResult = 0;
 			}
-			else if(manager.account.deposit(Double.valueOf(amtField.getText())) == 0) {
-				JOptionPane.showMessageDialog(null, "Invalid Input.");
-				System.out.println("Failure.");
+			else{
+				checkResult = act.deposit(Double.valueOf(amtField.getText()));
 			}
-			else {
-				System.out.println("Error");
+			if(checkResult == 0) {
+				updateErrorMessage("Invalid amount.");
+				amtField.setText("");
+			}
+			else if(checkResult == 3) {
+				manager.db.updateAccount(act);
+				updateErrorMessage("Amount successfully deposited.");
+				amtField.setText("");
 			}
 		}
 		else if(source.equals(mainMenuButton)) {
+			updateErrorMessage("");
+			amtField.setText("");
+			manager.sendBankAccount(act, "Home");
 			manager.switchTo(ATM.HOME_VIEW);
 		}
 		else {
