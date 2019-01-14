@@ -177,6 +177,44 @@ public class LoginView extends JPanel implements ActionListener {
 	 * @throws IOException
 	 */
 	
+	public boolean checkUserInput(String input, int type) {
+		// 1 = integer, 2 = double, 3 = long
+		if(type == 1) {
+			int integerInput;
+			try{
+				integerInput = Integer.parseInt(input);
+		    }
+		    catch(NumberFormatException e){
+		    	System.out.println("Response must be numerical. Try again.\n");
+		    	return false;
+		    }
+			return true;
+		}
+		
+		else if(type == 2){
+			double doubleInput;
+			try {
+				doubleInput = Double.parseDouble(input);
+			}
+			catch (NumberFormatException e){
+				System.out.println("Response must be numerical. Try again.\n");
+				return false;
+			}
+			return true;
+		}
+		else {
+			Long longInput;
+			try {
+				longInput = Long.parseLong(input);
+			}
+			catch (NumberFormatException e) {
+				System.out.println("Response must be numerical. Try again.\n");
+				return false;
+			}
+			return true;
+		}
+	}
+	
 	private void writeObject(ObjectOutputStream oos) throws IOException {
 		throw new IOException("ERROR: The LoginView class is not serializable.");
 	}
@@ -194,10 +232,26 @@ public class LoginView extends JPanel implements ActionListener {
 		Object source = e.getSource();
 		
 		if (source.equals(loginButton)) {
-			manager.login(accountField.getText(), pinField.getPassword());
+			boolean ok = true;
+			
+			if(!checkUserInput(accountField.getText(), 2) || !checkUserInput(pinField.getText(), 1)) {
+				ok = false;
+				updateErrorMessage("Invalid entry.");
+			}
+			
+			if(ok) {
+				updateErrorMessage("");
+				String accountNum = accountField.getText();
+				char[] pin = pinField.getPassword();
+				accountField.setText("");
+				pinField.setText("");
+				manager.login(accountNum, pin);
+			}
 		} else if (source.equals(createButton)) {
+			updateErrorMessage("");
 			manager.switchTo(ATM.CREATE_VIEW);
 		} else if (source.equals(powerButton)) {
+			updateErrorMessage("");
 			manager.shutdown();
 		} else {
 			System.err.println("ERROR: Action command not found (" + e.getActionCommand() + ")");
