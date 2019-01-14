@@ -20,10 +20,12 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import controller.ViewManager;
+import model.BankAccount;
 
 @SuppressWarnings("serial")
 public class WithdrawView extends JPanel implements ActionListener {
 		
+	private BankAccount account;
 	private ViewManager manager;			// manages interactions between the views, model, and database
 	private JTextField amtField;		// textfield where the user enters his or her account number
 	private JButton withdrawButton;
@@ -43,7 +45,9 @@ public class WithdrawView extends JPanel implements ActionListener {
 		this.errorMessageLabel = new JLabel("", SwingConstants.CENTER);
 		initialize();
 	}
-	
+	public void setBankAccount(BankAccount setAccount) {
+		this.account = setAccount;
+	}
 	///////////////////// INSTANCE METHODS ////////////////////////////////////////////
 	
 	/**
@@ -68,6 +72,8 @@ public class WithdrawView extends JPanel implements ActionListener {
 		initAmtField();
 		initWithdrawButton();
 		initMainMenuButton();
+		initErrorMessageLabel();
+
 	}
 	
 	/*
@@ -140,6 +146,44 @@ public class WithdrawView extends JPanel implements ActionListener {
 	private void writeObject(ObjectOutputStream oos) throws IOException {
 		throw new IOException("ERROR: The LoginView class is not serializable.");
 	}
+	
+	public boolean checkUserInput(String input, int type) {
+		// 1 = integer, 2 = double, 3 = long
+		if(type == 1) {
+			int integerInput;
+			try{
+				integerInput = Integer.parseInt(input);
+		    }
+		    catch(NumberFormatException e){
+		    	System.out.println("Response must be numerical. Try again.\n");
+		    	return false;
+		    }
+			return true;
+		}
+		
+		else if(type == 2){
+			double doubleInput;
+			try {
+				doubleInput = Double.parseDouble(input);
+			}
+			catch (NumberFormatException e){
+				System.out.println("Response must be numerical. Try again.\n");
+				return false;
+			}
+			return true;
+		}
+		else {
+			Long longInput;
+			try {
+				longInput = Long.parseLong(input);
+			}
+			catch (NumberFormatException e) {
+				System.out.println("Response must be numerical. Try again.\n");
+				return false;
+			}
+			return true;
+		}
+	}
 
 	///////////////////// OVERRIDDEN METHODS //////////////////////////////////////////
 	
@@ -149,21 +193,32 @@ public class WithdrawView extends JPanel implements ActionListener {
 	 * @param e
 	 */
 	
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		
 		if (source.equals(withdrawButton)) {
-			if(manager.account.withdraw(Double.valueOf(amtField.getText())) == 3) {
-				JOptionPane.showMessageDialog(null, "Withdrawl Successful.");
+			int checkResult = 0;
+			if(amtField.getText() == "" || !checkUserInput(amtField.getText(), 2)) {
+				checkResult = 0;
+			}
+			else{
+				checkResult = account.withdraw(Double.valueOf(amtField.getText()));
+			}
+			
+			if(checkResult == 3) {
+				manager.db.updateAccount(account);
+				updateErrorMessage("Amount successfully withdrawn.");
+				amtField.setText("");
 				System.out.println("Success.");
 			}
-			else if(manager.account.withdraw(Double.valueOf(amtField.getText())) == 0) {
-				JOptionPane.showMessageDialog(null, "Invalid Input.");
+			else if(checkResult == 0) {
+				updateErrorMessage("Invalid amount.");
 				System.out.println("Failure.");
 			}
-			else if(manager.account.withdraw(Double.valueOf(amtField.getText())) == 1) {
-				JOptionPane.showMessageDialog(null, "Insufficient Funds.");
+			else if(checkResult == 1) {
+				updateErrorMessage("Insufficient Funds.");
 				System.out.println("Failure.");
 			}
 			else {
@@ -171,6 +226,9 @@ public class WithdrawView extends JPanel implements ActionListener {
 			}
 		}
 		else if(source.equals(mainMenuButton)) {
+			updateErrorMessage("");
+			amtField.setText("");
+			manager.sendBankAccount(account, "Home");
 			manager.switchTo(ATM.HOME_VIEW);
 		}
 		else {
