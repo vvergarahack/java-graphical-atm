@@ -412,7 +412,7 @@ public class CreateView extends JPanel implements ActionListener {
 						(String)stateField.getSelectedItem(), postalCodeField.getText());
 				System.out.println(newUser.toString());
 				newAccount = new BankAccount('Y', newAccountNumber, 0.00, newUser);
-				if(manager.insertAccount(newAccount)) {
+				if(manager.insertAct(newAccount)) {
 					System.out.print("SUCCESS");
 				}
 				pinField.setText("");
