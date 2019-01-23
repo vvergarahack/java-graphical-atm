@@ -75,6 +75,7 @@ public class DepositView extends JPanel implements ActionListener {
 		initAmtField();
 		initDepositButton();
 		initMainMenuButton();
+		initErrorMessageLabel();
 	}
 	
 	/*
