@@ -212,7 +212,7 @@ public class DepositView extends JPanel implements ActionListener {
 				amtField.setText("");
 			}
 			else if(checkResult == 3) {
-				manager.db.updateAccount(act);
+				manager.db.updateAct(act);
 				updateErrorMessage("Amount successfully deposited.");
 				amtField.setText("");
 			}
@@ -220,7 +220,7 @@ public class DepositView extends JPanel implements ActionListener {
 		else if(source.equals(mainMenuButton)) {
 			updateErrorMessage("");
 			amtField.setText("");
-			manager.sendBankAccount(act, "Home");
+			manager.sendBankAct(act, "Home");
 			manager.switchTo(ATM.HOME_VIEW);
 		}
 		else {
