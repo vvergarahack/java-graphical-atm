@@ -17,7 +17,7 @@ public class Database {
 	 * Field names for database table: accounts.
 	 */
 	
-	public static final String ACCOUNT_NUMBER = "account_number";
+	public static final String ACT_NUMBER = "act_number";
 	public static final String PIN = "pin";
 	public static final String BALANCE = "balance";
 	public static final String LAST_NAME = "last_name";
@@ -53,17 +53,17 @@ public class Database {
 	/**
 	 * Retrieves an existing account by account number and PIN.
 	 * 
-	 * @param accountNumber
+	 * @param actNumber
 	 * @param pin
 	 * @return
 	 */
 	
-	public BankAccount getAccount(long accountNumber, int pin) {
+	public BankAccount getAct(long actNumber, int pin) {
 		try {
 			stmt = conn.createStatement();
 			
-			PreparedStatement selectStmt = conn.prepareStatement("SELECT * FROM accounts WHERE account_number = ? AND pin = ?");
-			selectStmt.setLong(1, accountNumber);
+			PreparedStatement selectStmt = conn.prepareStatement("SELECT * FROM acts WHERE act_number = ? AND pin = ?");
+			selectStmt.setLong(1, actNumber);
 			selectStmt.setInt(2, pin);
 			
 			rs = selectStmt.executeQuery();
@@ -80,16 +80,16 @@ public class Database {
 	/**
 	 * Retrieves an existing account by account number.
 	 * 
-	 * @param accountNumber
+	 * @param actNumber
 	 * @return
 	 */
 	
-	public BankAccount getAccount(long accountNumber) {
+	public BankAccount getAct(long actNumber) {
 		try {
 			stmt = conn.createStatement();
 			
-			PreparedStatement selectStmt = conn.prepareStatement("SELECT * FROM accounts WHERE account_number = ?");
-			selectStmt.setLong(1, accountNumber);
+			PreparedStatement selectStmt = conn.prepareStatement("SELECT * FROM acts WHERE act_number = ?");
+			selectStmt.setLong(1, actNumber);
 			
 			rs = selectStmt.executeQuery();
 			if (rs.next()) {
@@ -105,27 +105,32 @@ public class Database {
 	/**
 	 * Inserts an account into the database.
 	 * 
-	 * @param account
+	 * @param act
 	 * @return true if the insert is successful; false otherwise.
 	 */
 	
-	public boolean insertAccount(BankAccount account) {
+	public boolean insertAct(BankAccount act) {
 		try {
 			stmt = conn.createStatement();
 			
-			PreparedStatement insertStmt = conn.prepareStatement("INSERT INTO accounts VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");		
-			insertStmt.setLong(1, account.getAccountNumber());
-			insertStmt.setInt(2, account.getUser().getPin());
-			insertStmt.setDouble(3, account.getBalance());
-			insertStmt.setString(4, account.getUser().getLastName());
-			insertStmt.setString(5, account.getUser().getFirstName());
-			insertStmt.setInt(6, account.getUser().getDob());
-			insertStmt.setLong(7, account.getUser().getPhone());
-			insertStmt.setString(8, account.getUser().getStreetAddress());
-			insertStmt.setString(9, account.getUser().getCity());
-			insertStmt.setString(10, account.getUser().getState());
-			insertStmt.setString(11, account.getUser().getZip());
-			insertStmt.setString(12, String.valueOf(account.getStatus()));
+			PreparedStatement insertStmt = conn.prepareStatement("INSERT INTO acts VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");		
+			insertStmt.setLong(1, act.getActNumber());
+			insertStmt.setInt(2, act.getUser().getPin());
+			
+			insertStmt.setDouble(3, act.getBalance());
+			
+			insertStmt.setString(4, act.getUser().getLastName());
+			insertStmt.setString(5, act.getUser().getFirstName());
+			
+			insertStmt.setInt(6, act.getUser().getDob());
+			insertStmt.setLong(7, act.getUser().getPhone());
+			
+			insertStmt.setString(8, act.getUser().getStreetAddress());
+			insertStmt.setString(9, act.getUser().getCity());
+			insertStmt.setString(10, act.getUser().getState());
+			insertStmt.setString(11, act.getUser().getZip());
+			
+			insertStmt.setString(12, String.valueOf(act.getStatus()));
 			
 			insertStmt.executeUpdate();
 			insertStmt.close();
@@ -141,17 +146,17 @@ public class Database {
 	/**
 	 * Performs a soft delete of an account by setting the status to closed.
 	 * 
-	 * @param account
+	 * @param act
 	 * @return true if the transaction is successful; false otherwise.
 	 */
 	
-	public boolean closeAccount(BankAccount account) {
+	public boolean closeAct(BankAccount act) {
 		try {
 			stmt = conn.createStatement();
 			
-			PreparedStatement insertStmt = conn.prepareStatement("UPDATE accounts SET status = ? WHERE account_number = ?");		
+			PreparedStatement insertStmt = conn.prepareStatement("UPDATE acts SET status = ? WHERE act_number = ?");		
 			insertStmt.setString(1, "N");
-			insertStmt.setLong(2, account.getAccountNumber());
+			insertStmt.setLong(2, act.getActNumber());
 			
 			insertStmt.executeUpdate();
 			insertStmt.close();
@@ -168,18 +173,18 @@ public class Database {
 	 * Updates all potentially edited fields (i.e., PIN, account balance, phone number,
 	 * street address, city, state, and zip code).
 	 * 
-	 * @param account
+	 * @param act
 	 * @return true if the transaction is successful; false otherwise.
 	 */
 	
-	public boolean updateAccount(BankAccount account) {
+	public boolean updateAct(BankAccount act) {
 		try {
 			stmt = conn.createStatement();
 			
 			// all editable fields are included in this update statement
 			
 			PreparedStatement insertStmt = conn.prepareStatement(
-				"UPDATE accounts SET " +
+				"UPDATE acts SET " +
 					"pin = ?, " +
 					"balance = ?, " +
 					"phone = ?, " +
@@ -187,16 +192,16 @@ public class Database {
 					"city = ?, " +
 					"state = ?, " +
 					"zip = ? " +
-				"WHERE account_number = ?"
+				"WHERE act_number = ?"
 			);		
-			insertStmt.setInt(1, account.getUser().getPin());
-			insertStmt.setDouble(2, account.getBalance());
-			insertStmt.setLong(3, account.getUser().getPhone());
-			insertStmt.setString(4, account.getUser().getStreetAddress());
-			insertStmt.setString(5, account.getUser().getCity());
-			insertStmt.setString(6, account.getUser().getState());
-			insertStmt.setString(7, account.getUser().getZip());
-			insertStmt.setLong(8, account.getAccountNumber());
+			insertStmt.setInt(1, act.getUser().getPin());
+			insertStmt.setDouble(2, act.getBalance());
+			insertStmt.setLong(3, act.getUser().getPhone());
+			insertStmt.setString(4, act.getUser().getStreetAddress());
+			insertStmt.setString(5, act.getUser().getCity());
+			insertStmt.setString(6, act.getUser().getState());
+			insertStmt.setString(7, act.getUser().getZip());
+			insertStmt.setLong(8, act.getActNumber());
 			
 			insertStmt.executeUpdate();
 			insertStmt.close();
@@ -215,12 +220,12 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public long highestAcctNumber() {
-		long accountNum = 0;
+		long actNum = 0;
 		try {
 			stmt = conn.createStatement();
 
 
-			PreparedStatement selectStmt = conn.prepareStatement("SELECT MAX(account_number) FROM accounts");
+			PreparedStatement selectStmt = conn.prepareStatement("SELECT MAX(act_number) FROM acts");
 //			selectStmt.setLong(1, accountNumber);
 			
 			rs = selectStmt.executeQuery();
@@ -233,7 +238,7 @@ public class Database {
 			e.printStackTrace();
 		}
 		
-		return accountNum;
+		return actNum;
 	}
 	
 	public void shutdown() throws SQLException {
@@ -265,8 +270,8 @@ public class Database {
 	 */
 	
 	private void setup() throws SQLException {
-		createAccountsTable();
-		insertDefaultAccount();
+		createActsTable();
+		insertDefaultAct();
 	}
 	
 	
@@ -275,7 +280,7 @@ public class Database {
 			stmt = conn.createStatement();
 
 
-			PreparedStatement deleteStmt = conn.prepareStatement("DELETE FROM accounts WHERE 1 = 1");
+			PreparedStatement deleteStmt = conn.prepareStatement("DELETE FROM acts WHERE 1 = 1");
 			
 			deleteStmt.executeQuery();
 			
@@ -290,16 +295,16 @@ public class Database {
 	 * @throws SQLException
 	 */
 	
-	private void createAccountsTable() throws SQLException {
+	private void createActsTable() throws SQLException {
 		meta = conn.getMetaData();
-		rs = meta.getTables(null, "USER1", "ACCOUNTS", null);
+		rs = meta.getTables(null, "USER1", "ACTS", null);
 		
 		if (!rs.next()) {
 			stmt = conn.createStatement();
 			
 			stmt.execute(
-				"CREATE TABLE accounts (" +
-					"account_number BIGINT PRIMARY KEY, " +
+				"CREATE TABLE acts (" +
+					"act_number BIGINT PRIMARY KEY, " +
 					"pin INT, " +
 					"balance FLOAT, " +
 					"last_name VARCHAR(20), " +
@@ -322,11 +327,11 @@ public class Database {
 	 * @throws SQLException
 	 */
 	
-	private void insertDefaultAccount() throws SQLException {
+	private void insertDefaultAct() throws SQLException {
 		stmt = conn.createStatement();
-		rs = stmt.executeQuery("SELECT COUNT(*) FROM accounts");
+		rs = stmt.executeQuery("SELECT COUNT(*) FROM acts");
 		if (rs.next() && rs.getInt(1) == 0) {
-			PreparedStatement insertStmt = conn.prepareStatement("INSERT INTO accounts VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement insertStmt = conn.prepareStatement("INSERT INTO acts VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			
 			insertStmt.setLong(1, 100000001L);
 			insertStmt.setInt(2, 1234);
