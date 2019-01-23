@@ -114,7 +114,7 @@ public class InfoView extends JPanel implements ActionListener {
 		label.setFont(new Font("DialogInput", Font.BOLD, 14));
 		
 		accountNumberField = new JTextField(20);
-		accountNumberField.setText(Long.toString(account.getAccountNumber()));
+		accountNumberField.setText(Long.toString(account.getActNumber()));
 		accountNumberField.setBounds(205, 20, 200, 25);
 		accountNumberField.setEditable(false);
 		
@@ -455,9 +455,9 @@ public class InfoView extends JPanel implements ActionListener {
 		
 		if (source.equals(editButton)) {
 			//set field to editable
-			if(editButton.getLabel() == "Edit") {
-				editButton.setLabel("Save");
-				cancelButton.setLabel("Cancel");
+			if(editButton.getText() == "Edit") {
+				editButton.setText("Save");
+				cancelButton.setText("Cancel");
 				streetAddressField.setEditable(true);
 				cityField.setEditable(true);
 				stateField.setEnabled(true);
@@ -468,39 +468,40 @@ public class InfoView extends JPanel implements ActionListener {
 				pinField.setEditable(true);
 				pinField.setEchoChar((char)0);
 			}
-			else if(editButton.getLabel() == "Save") {
+			else if(editButton.getText() == "Save") {
 				
 				if(pinField.getText().length() != 4) {
-					updateErrorMessage("Pin must be 4 characters");
+					updateErrorMessage("Pin must be 4 characters long.");
 				}
 				else if(!checkUserInput(pinField.getText(), 1)) {
-					updateErrorMessage("The pin can only consist of numbers.");
+					updateErrorMessage("Pin can only includue numbers.");
 				}
 				else if(pinField.getText().length() != 4 || phoneNumberField1.getText().length() != 3 || phoneNumberField2.getText().length() != 3 
 						|| phoneNumberField3.getText().length() != 4 || postalCodeField.getText().length() != 5) {
-					updateErrorMessage("One or more entries are too long or too short.");
+					updateErrorMessage("Entrues are too long or short.");
 				}
 				else if(!(checkUserInput(phoneNumberField1.getText(), 1)) || !(checkUserInput(phoneNumberField2.getText(), 1)) 
 						|| !(checkUserInput(phoneNumberField3.getText(), 1))) {
-					updateErrorMessage("Invalid entry, phone field.");
+					updateErrorMessage("Invalid entry, phoneNumber.");
 				}
 				else if(!(checkUserInput(postalCodeField.getText(), 1)) ) {
-					updateErrorMessage("Invalid entry - postalCode.");
+					updateErrorMessage("Invalid entry, postalCode.");
 				}
 				else if(!(checkUserInput(streetAddressField.getText(), 5))) {
-					updateErrorMessage("Invalid entry - streetAddress.");
+					updateErrorMessage("Invalid entry, streetAddress.");
 				}
 				else if(!(checkUserInput(cityField.getText(), 4))) {
-					updateErrorMessage("Invalid entry - city");
+					updateErrorMessage("Invalid entry, city");
 				}
 				else {
+				
 					account.getUser().setStreetAddress(streetAddressField.getText());
 					account.getUser().setCity(cityField.getText());
 					account.getUser().setState(stateField.getSelectedItem().toString());
 					account.getUser().setZip(postalCodeField.getText());
 					account.getUser().setPhone(Long.valueOf(phoneNumberField1.getText() + phoneNumberField2.getText() + phoneNumberField3.getText()));
 					account.getUser().setPin(account.getUser().getPin(), Integer.valueOf(pinField.getText()));
-					manager.updateAccount(account);
+					manager.updateAct(account);
 
 					streetAddressField.setEditable(false);
 					cityField.setEditable(false);
@@ -511,21 +512,21 @@ public class InfoView extends JPanel implements ActionListener {
 					phoneNumberField3.setEditable(false);
 					pinField.setEditable(false);
 					pinField.setEchoChar('\u2022');
-					editButton.setLabel("Edit");
-					cancelButton.setLabel("Main Meu");
+					editButton.setText("Edit");
+					cancelButton.setText("Main Meu");
 				}
 			}
 		}
 		else if(source.equals(cancelButton)) {
 			
-			if(cancelButton.getLabel() == "Main Menu") {
-				manager.sendBankAccount(account, "Home");
+			if(cancelButton.getText() == "Main Menu") {
+				manager.sendBankAct(account, "Home");
 				manager.switchTo(ATM.HOME_VIEW);
 			}
 			else {
 				initInfoPortion();
-				editButton.setLabel("Edit");
-				cancelButton.setLabel("Main Menu");
+				editButton.setText("Edit");
+				cancelButton.setText("Main Menu");
 			}
 		}
 		else {
