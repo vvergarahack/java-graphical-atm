@@ -95,7 +95,7 @@ public class HomeView extends JPanel implements ActionListener {
 		
 		this.add(printName);
 		
-		printAcct = new JLabel("Account Number: " + Long.toString(account.getAccountNumber()));
+		printAcct = new JLabel("Account Number: " + Long.toString(account.getActNumber()));
 		printAcct.setBounds(10,40,500,25);
 		printAcct.setFont(new Font("DialogInput", Font.BOLD, 14));
 		
@@ -175,9 +175,9 @@ public class HomeView extends JPanel implements ActionListener {
 		Object source = e.getSource();
 		
 		if(source.equals(logOffButton)) {
-			manager.updateAccount(account);
-			manager.getAccount().setUser(null);
-			manager.setAccount(null);
+			manager.updateAct(account);
+			manager.getAct().setUser(null);
+			manager.setAct(null);
 			this.remove(printBalance);
 			this.remove(printName);
 			this.remove(printAcct);
@@ -187,28 +187,28 @@ public class HomeView extends JPanel implements ActionListener {
 			this.remove(printBalance);
 			this.remove(printName);
 			this.remove(printAcct);
-			manager.sendBankAccount(account, "Deposit");
+			manager.sendBankAct(account, "Deposit");
 			manager.switchTo(ATM.DEPOSIT_VIEW);
 		}
 		else if(source.equals(withdrawButton)) {
 			this.remove(printBalance);
 			this.remove(printName);
 			this.remove(printAcct);
-			manager.sendBankAccount(account, "Withdraw");
+			manager.sendBankAct(account, "Withdraw");
 			manager.switchTo(ATM.WITHDRAW_VIEW);
 		}
 		else if(source.equals(transferButton)) {
 			this.remove(printBalance);
 			this.remove(printName);
 			this.remove(printAcct);
-			manager.sendBankAccount(account, "Transfer");
+			manager.sendBankAct(account, "Transfer");
 			manager.switchTo(ATM.TRANSFER_VIEW);
 		}
 		else if(source.equals(viewAcctButton)) {
 			this.remove(printBalance);
 			this.remove(printName);
 			this.remove(printAcct);
-			manager.sendBankAccount(account, "ViewInfo");
+			manager.sendBankAct(account, "ViewInfo");
 			manager.switchTo(ATM.INFO_VIEW);
 		}
 		else if(source.equals(closeAcctButton)) {
@@ -220,15 +220,15 @@ public class HomeView extends JPanel implements ActionListener {
 					JOptionPane.QUESTION_MESSAGE
 				);
 				if (choice == 0) {
-					if(manager.closeAccount(account)) {
+					if(manager.closeAct(account)) {
 						this.remove(printBalance);
 						this.remove(printName);
 						this.remove(printAcct);
 						
 						manager.switchTo(ATM.LOGIN_VIEW);
 						
-						manager.getAccount().setUser(null);
-						manager.setAccount(null);
+						manager.getAct().setUser(null);
+						manager.setAct(null);
 						}
 				}
 		}
