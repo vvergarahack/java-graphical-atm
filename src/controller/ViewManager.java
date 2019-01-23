@@ -134,7 +134,7 @@ public class ViewManager {
 			tv.setBankAccount(account);
 		}
 		else if (view.equals("ViewInfo")) {
-			view.InformationView iv = ((view.InformationView) views.getComponents()[ATM.INFO_VIEW_INDEX]);
+			view.InfoView iv = ((view.InfoView) views.getComponents()[ATM.INFO_VIEW_INDEX]);
 			iv.setBankAccount(account);
 			iv.initInfoPortion();
 		}
