@@ -85,7 +85,7 @@ public class CreateView extends JPanel implements ActionListener {
 		initCreateAccountButton();
 		initCancelButton();
 		initErrorMessageLabel();
-		this.add(new javax.swing.JLabel("CreateView", javax.swing.SwingConstants.CENTER));
+		//this.add(new javax.swing.JLabel("CreateView", javax.swing.SwingConstants.CENTER));
 		
 	}
 	
@@ -315,7 +315,7 @@ public class CreateView extends JPanel implements ActionListener {
 			}
 			return true;
 		}
-		else {
+		else if(type == 3){
 			Long longInput;
 			try {
 				longInput = Long.parseLong(input);
@@ -323,6 +323,24 @@ public class CreateView extends JPanel implements ActionListener {
 			catch (NumberFormatException e) {
 				System.out.println("Response must be numerical. Try again.\n");
 				return false;
+			}
+			return true;
+		}
+		else if(type == 4) {
+			for(int i = 0; i < input.length(); i++) {
+				if(!(input.charAt(i) >= 'a' && input.charAt(i) <= 'z') && !(input.charAt(i) >= 'A' && input.charAt(i) <= 'Z') && !(input.charAt(i) == '\'') && !(input.charAt(i) == '-') && !(input.charAt(i) == ' ') && !(input.charAt(i) == ',') && !(input.charAt(i) == '.')) {
+					System.out.print(i + " " + input.charAt(i));
+					return false;
+				}
+			}
+			return true;
+		}
+		else {
+			for(int i = 0; i < input.length(); i++) {
+				if(!(input.charAt(i) >= '0' && input.charAt(i) <= '9') && !(input.charAt(i) >= 'a' && input.charAt(i) <= 'z') && !(input.charAt(i) >= 'A' && input.charAt(i) <= 'Z') && !(input.charAt(i) == '\'') && !(input.charAt(i) == '-') && !(input.charAt(i) == ' ') && !(input.charAt(i) == ',')&& !(input.charAt(i) == '.')) {
+					System.out.print(i + " " + input.charAt(i));
+					return false;
+				}
 			}
 			return true;
 		}
@@ -363,7 +381,26 @@ public class CreateView extends JPanel implements ActionListener {
 				ok = false;
 				updateErrorMessage("One or more entries are too long or too short.");
 			}
-			
+			else if(!(checkUserInput(phoneNumberField1.getText(), 1)) || !(checkUserInput(phoneNumberField2.getText(), 1)) || !(checkUserInput(phoneNumberField3.getText(), 1))) {
+				updateErrorMessage("Invalid entry - phone number.");
+				ok = false;
+			}
+			else if(!(checkUserInput(postalCodeField.getText(), 1)) ) {
+				updateErrorMessage("Invalid entry - postal code.");
+				ok = false;
+			}
+			else if(!(checkUserInput(streetAddressField.getText(), 5))) {
+				updateErrorMessage("Invalid entry - address.");
+				ok = false;
+			}
+			else if(!(checkUserInput(cityField.getText(), 4))) {
+				updateErrorMessage("Invalid entry - city.");
+				ok = false;
+			}
+			else if(!(checkUserInput(firstNameField.getText(), 4)) || !(checkUserInput(lastNameField.getText(), 4))) {
+				updateErrorMessage("Invalid entry - name.");
+				ok = false;
+			}
 			if(ok) {
 				
 				newAccountNumber = manager.db.highestAcctNumber() + 1;
@@ -375,7 +412,9 @@ public class CreateView extends JPanel implements ActionListener {
 						(String)stateField.getSelectedItem(), postalCodeField.getText());
 				System.out.println(newUser.toString());
 				newAccount = new BankAccount('Y', newAccountNumber, 0.00, newUser);
-				manager.db.insertAccount(newAccount); 
+				if(manager.insertAccount(newAccount)) {
+					System.out.print("SUCCESS");
+				}
 				pinField.setText("");
 				firstNameField.setText("");
 				lastNameField.setText("");
@@ -392,7 +431,7 @@ public class CreateView extends JPanel implements ActionListener {
 				manager.switchTo(ATM.LOGIN_VIEW);
 			}
 		}
-		else if(source.equals(cancelButton)) {
+		else {
 			pinField.setText("");
 			firstNameField.setText("");
 			lastNameField.setText("");
@@ -408,9 +447,7 @@ public class CreateView extends JPanel implements ActionListener {
 			postalCodeField.setText("");
 			manager.switchTo(ATM.LOGIN_VIEW);
 		}
-		else {
-			System.out.println("Error");
-		}
+
 		/*else {
 			System.out.println("Error!");
 		}*/
