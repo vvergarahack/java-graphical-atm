@@ -12,7 +12,7 @@ import view.ATM;
 public class BankAccount {
 		
 	private char status;			// account open/closed status (Y for open, N for closed)
-	private long accountNumber;		// account number (a 9-digit number)
+	private long actNumber;		// account number (a 9-digit number)
 	private double balance;			// account balance (restricted to two places after the decimal)
 	private User user;				// account holder (see User class)
 		
@@ -25,9 +25,9 @@ public class BankAccount {
 	 * @param user
 	 */
 	
-	public BankAccount(char status, long accountNumber, double balance, User user) {
+	public BankAccount(char status, long actNumber, double balance, User user) {
 		this.status = status;
-		this.accountNumber = accountNumber;
+		this.actNumber = actNumber;
 		this.balance = balance;
 		this.user = user;
 	}
@@ -40,7 +40,7 @@ public class BankAccount {
 	 */
 	
 	public BankAccount(ResultSet rs) throws SQLException {	
-		this(rs.getString(Database.STATUS).charAt(0), rs.getLong(Database.ACCOUNT_NUMBER), rs.getDouble(Database.BALANCE), new User(rs));
+		this(rs.getString(Database.STATUS).charAt(0), rs.getLong(Database.ACT_NUMBER), rs.getDouble(Database.BALANCE), new User(rs));
 	}
 	
 	///////////////////// GETTERS & SETTERS ///////////////////////////////////////////
@@ -61,8 +61,8 @@ public class BankAccount {
 	 * @return accountNumber
 	 */
 	
-	public long getAccountNumber() {
-		return accountNumber;
+	public long getActNumber() {
+		return actNumber;
 	}
 	
 	/**
@@ -245,6 +245,6 @@ public class BankAccount {
 	
 	@Override
 	public String toString() {
-		return "{ Account No.: " + accountNumber + ", Balance: " + getFormattedBalance() + " }";	// modify as needed
+		return "{ Account No.: " + actNumber + ", Balance: " + getFormattedBalance() + " }";	// modify as needed
 	}
 }
