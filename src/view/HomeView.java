@@ -175,8 +175,8 @@ public class HomeView extends JPanel implements ActionListener {
 		Object source = e.getSource();
 		
 		if(source.equals(logOffButton)) {
-			manager.db.updateAccount(account);
-			manager.account.setUser(null);
+			manager.updateAccount(account);
+			manager.getAccount().setUser(null);
 			manager.setAccount(null);
 			this.remove(printBalance);
 			this.remove(printName);
@@ -220,10 +220,16 @@ public class HomeView extends JPanel implements ActionListener {
 					JOptionPane.QUESTION_MESSAGE
 				);
 				if (choice == 0) {
-					if(manager.db.closeAccount(account)) {
-						this.removeAll();
+					if(manager.closeAccount(account)) {
+						this.remove(printBalance);
+						this.remove(printName);
+						this.remove(printAcct);
+						
 						manager.switchTo(ATM.LOGIN_VIEW);
-					}
+						
+						manager.getAccount().setUser(null);
+						manager.setAccount(null);
+						}
 				}
 		}
 		else {
