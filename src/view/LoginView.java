@@ -2,12 +2,12 @@ package view;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
+//import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
+//import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
+//import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -107,7 +107,7 @@ public class LoginView extends JPanel implements ActionListener {
 		
 		pinField = new JPasswordField(20);
 		pinField.setBounds(205, 140, 200, 35);
-		pinField.addActionListener(this);
+		//pinField.addActionListener(this);
 		
 		this.add(label);
 		this.add(pinField);
@@ -248,9 +248,13 @@ public class LoginView extends JPanel implements ActionListener {
 				manager.login(accountNum, pin);
 			}
 		} else if (source.equals(createButton)) {
+			accountField.setText("");
+			pinField.setText("");
 			updateErrorMessage("");
 			manager.switchTo(ATM.CREATE_VIEW);
 		} else if (source.equals(powerButton)) {
+			accountField.setText("");
+			pinField.setText("");
 			updateErrorMessage("");
 			manager.shutdown();
 		} else {
