@@ -38,6 +38,27 @@ public class ViewManager {
 	 * @param accountNumber
 	 * @param pin
 	 */
+	
+	public boolean updateAccount(BankAccount account) {
+		return db.updateAccount(account);
+	}
+	
+	public boolean closeAccount(BankAccount account) {
+		return db.closeAccount(account);
+	}
+	
+	public boolean insertAccount(BankAccount account) {
+		return db.insertAccount(account);
+	}
+	
+	public BankAccount getAccount(Long accountNumber) {
+		return db.getAccount(accountNumber);
+	}
+	
+	public long highestAcctNumber() {
+		return db.highestAcctNumber();
+	}
+	
 	public void setAccount(BankAccount account) {
 		this.account = account;
 	}
@@ -95,29 +116,27 @@ public class ViewManager {
 		}
 	}
 	public void sendBankAccount(BankAccount account, String view) {
-		switch(view) {
-		case "Home":
+		if (view.equals("Home")) {
 			view.HomeView hv = ((view.HomeView) views.getComponents()[ATM.HOME_VIEW_INDEX]);
 			hv.setBankAccount(account);
 			hv.initScreen();
-			break;
-		case "Deposit":
+		}
+		else if (view.equals("Deposit")) {
 			view.DepositView dv = ((view.DepositView) views.getComponents()[ATM.DEPOSIT_VIEW_INDEX]);
 			dv.setBankact(account);
-			break;
-		case "Withdraw":
+		}
+		else if (view.equals("Withdraw")) {
 			view.WithdrawView wv = ((view.WithdrawView) views.getComponents()[ATM.WITHDRAW_VIEW_INDEX]);
 			wv.setBankAccount(account);
-			break;
-		case "Transfer":
+		}
+		else if (view.equals("Transfer")) {
 			view.TransferView tv = ((view.TransferView) views.getComponents()[ATM.TRANSFER_VIEW_INDEX]);
 			tv.setBankAccount(account);
-			break;
-		/*case "ViewInfo":
-			view.InfoView iv = ((view.InfoView) views.getComponents()[ATM.INFO_VIEW_INDEX]);
+		}
+		else if (view.equals("ViewInfo")) {
+			view.InformationView iv = ((view.InformationView) views.getComponents()[ATM.INFO_VIEW_INDEX]);
 			iv.setBankAccount(account);
 			iv.initInfoPortion();
-			break;*/
 		}
 	}
 	
