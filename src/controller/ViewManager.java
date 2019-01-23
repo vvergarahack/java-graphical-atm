@@ -15,7 +15,7 @@ public class ViewManager {
 	
 	private Container views;				// the collection of all views in the application
 	public Database db;					// a reference to the database
-	public BankAccount account;			// the user's bank account
+	public BankAccount act;			// the user's bank account
 	private BankAccount destination;		// an account to which the user can transfer funds
 	
 	/**
@@ -39,43 +39,49 @@ public class ViewManager {
 	 * @param pin
 	 */
 	
-	public boolean updateAccount(BankAccount account) {
-		return db.updateAccount(account);
-	}
-	
-	public boolean closeAccount(BankAccount account) {
-		return db.closeAccount(account);
-	}
-	
-	public boolean insertAccount(BankAccount account) {
-		return db.insertAccount(account);
-	}
-	
-	public BankAccount getAccount(Long accountNumber) {
-		return db.getAccount(accountNumber);
-	}
+
 	
 	public long highestAcctNumber() {
 		return db.highestAcctNumber();
 	}
 	
-	public void setAccount(BankAccount account) {
-		this.account = account;
+	public void setAct(BankAccount act) {
+		this.act = act;
 	}
-	public void login(String accountNumber, char[] pin) {
+	public void login(String actNumber, char[] pin) {
 		try {
-			account = db.getAccount(Long.valueOf(accountNumber), Integer.valueOf(new String(pin)));
+			act = db.getAct(Long.valueOf(actNumber), Integer.valueOf(new String(pin)));
 			
-			if (account == null || account.getStatus() == 'N') {
+			if (act == null || act.getStatus() == 'N') {
 				LoginView lv = ((LoginView) views.getComponents()[ATM.LOGIN_VIEW_INDEX]);
 				lv.updateErrorMessage("Invalid account number and/or PIN.");
 			} else {
-				sendBankAccount(account, "Home");
+				sendBankAct(act, "Home");
 				switchTo(ATM.HOME_VIEW);
 			}
 		} catch (NumberFormatException e) {
 			// ignore
 		}
+	}
+	
+	public boolean updateAct(BankAccount act) {
+		
+		return db.updateAct(act);
+	}
+	
+	public boolean closeAct(BankAccount act) {
+		
+		return db.closeAct(act);
+	}
+	
+	public boolean insertAct(BankAccount act) {
+		
+		return db.insertAct(act);
+	}
+	
+	public BankAccount getAct(Long actNumber) {
+		
+		return db.getAct(actNumber);
 	}
 	
 	/**
@@ -93,8 +99,8 @@ public class ViewManager {
 	 * allows the database to clean up any open resources it used.
 	 */
 	
-	public BankAccount getAccount() {
-		return account;
+	public BankAccount getAct() {
+		return act;
 	}
 	
 	public void shutdown() {
@@ -115,27 +121,27 @@ public class ViewManager {
 			e.printStackTrace();
 		}
 	}
-	public void sendBankAccount(BankAccount account, String view) {
+	public void sendBankAct(BankAccount act, String view) {
 		if (view.equals("Home")) {
 			view.HomeView hv = ((view.HomeView) views.getComponents()[ATM.HOME_VIEW_INDEX]);
-			hv.setBankAccount(account);
+			hv.setBankAccount(act);
 			hv.initScreen();
 		}
 		else if (view.equals("Deposit")) {
 			view.DepositView dv = ((view.DepositView) views.getComponents()[ATM.DEPOSIT_VIEW_INDEX]);
-			dv.setBankact(account);
+			dv.setBankact(act);
 		}
 		else if (view.equals("Withdraw")) {
 			view.WithdrawView wv = ((view.WithdrawView) views.getComponents()[ATM.WITHDRAW_VIEW_INDEX]);
-			wv.setBankAccount(account);
+			wv.setBankAccount(act);
 		}
 		else if (view.equals("Transfer")) {
 			view.TransferView tv = ((view.TransferView) views.getComponents()[ATM.TRANSFER_VIEW_INDEX]);
-			tv.setBankAccount(account);
+			tv.setBankAccount(act);
 		}
 		else if (view.equals("ViewInfo")) {
 			view.InfoView iv = ((view.InfoView) views.getComponents()[ATM.INFO_VIEW_INDEX]);
-			iv.setBankAccount(account);
+			iv.setBankAccount(act);
 			iv.initInfoPortion();
 		}
 	}
