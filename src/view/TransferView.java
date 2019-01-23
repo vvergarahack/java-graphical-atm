@@ -213,7 +213,7 @@ public class TransferView extends JPanel implements ActionListener {
 		
 		if (source.equals(transferButton)) {
 			int test = -1;
-			if(accountField.getText() == "" || !checkUserInput(accountField.getText(), 3) || Long.valueOf(accountField.getText()) == act.getAccountNumber()) {
+			if(accountField.getText() == "" || !checkUserInput(accountField.getText(), 3) || Long.valueOf(accountField.getText()) == act.getActNumber()) {
 				test = 2;
 				updateErrorMessage("Invalid account number.");
 
@@ -224,37 +224,36 @@ public class TransferView extends JPanel implements ActionListener {
 
 			}
 			else{
-				BankAccount transferAccount = manager.db.getAccount(Long.valueOf(accountField.getText()));
+				BankAccount transferAccount = manager.db.getAct(Long.valueOf(accountField.getText()));
 				test = act.transfer(transferAccount, Double.valueOf(amtField.getText()));
-				if(test == 3) {
-					manager.db.updateAccount(act);
-//					System.out.println("Balance before updating account in transfer account: " + transferAccount.toString());
-					manager.db.updateAccount(transferAccount);
-//					System.out.println("Balance after updating account in transfer account: " + manager.db.getAccount(Long.valueOf(accountField.getText())).toString());
-					amtField.setText("");
-					accountField.setText("");
-					updateErrorMessage("Amount successfully transferred.");
-					
-				}
-				else if(test == 2) {
-					updateErrorMessage("Invalid account number.");
-				}
-				else if(test == 1) {
+				switch (test) {
+					case 0:
+						updateErrorMessage("Invalid amount.");
+						System.out.println("Failure.");
+						break;
+					case 1:
 					updateErrorMessage("Insufficient funds.");
-				}
-				else if(test == 0) {
-					updateErrorMessage("Invalid amount.");
-					System.out.println("Failure.");
-				}
-				else {
-					System.out.println("Error");
+						break;
+					case 2:
+						updateErrorMessage("Invalid account number.");
+						break;
+					case 3:
+						manager.db.updateAct(act);
+						manager.db.updateAct(transferAccount);
+						amtField.setText("");
+						accountField.setText("");
+						updateErrorMessage("Amount successfully transferred.");
+						break;
+					default:
+						System.out.println("Error");
+						break;
 				}
 			}
 		}
 		else if(source.equals(mainMenuButton)) {
 			updateErrorMessage("");
 			amtField.setText("");
-			manager.sendBankAccount(act, "Home");
+			manager.sendBankAct(act, "Home");
 			manager.switchTo(ATM.HOME_VIEW);
 		}
 		else {
