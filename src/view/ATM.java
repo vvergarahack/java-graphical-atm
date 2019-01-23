@@ -72,7 +72,7 @@ public class ATM extends JFrame {
 		views.add(new DepositView(manager), DEPOSIT_VIEW);
 		views.add(new WithdrawView(manager), WITHDRAW_VIEW);
 		views.add(new TransferView(manager), TRANSFER_VIEW);
-		views.add(new InformationView(manager), INFO_VIEW);
+		views.add(new InfoView(manager), INFO_VIEW);
 		
 		// configure the application frame
 		
