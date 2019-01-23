@@ -208,7 +208,7 @@ public class WithdrawView extends JPanel implements ActionListener {
 			}
 			
 			if(checkResult == 3) {
-				manager.db.updateAccount(account);
+				manager.db.updateAct(account);
 				updateErrorMessage("Amount successfully withdrawn.");
 				amtField.setText("");
 				System.out.println("Success.");
@@ -228,7 +228,7 @@ public class WithdrawView extends JPanel implements ActionListener {
 		else if(source.equals(mainMenuButton)) {
 			updateErrorMessage("");
 			amtField.setText("");
-			manager.sendBankAccount(account, "Home");
+			manager.sendBankAct(account, "Home");
 			manager.switchTo(ATM.HOME_VIEW);
 		}
 		else {
